@@ -1,0 +1,33 @@
+"";"mpg";"hp";"cyl"
+"Mazda RX4";21;110;6
+"Mazda RX4 Wag";21;110;6
+"Datsun 710";22,8;93;4
+"Hornet 4 Drive";21,4;110;6
+"Hornet Sportabout";18,7;175;8
+"Valiant";18,1;105;6
+"Duster 360";NA;245;8
+"Merc 240D";24,4;62;4
+"Merc 230";22,8;95;4
+"Merc 280";19,2;123;6
+"Merc 280C";17,8;123;6
+"Merc 450SE";16,4;180;8
+"Merc 450SL";17,3;180;8
+"Merc 450SLC";15,2;180;8
+"Cadillac Fleetwood";10,4;205;8
+"Lincoln Continental";NA;215;8
+"Chrysler Imperial";14,7;230;8
+"Fiat 128";32,4;66;4
+"Honda Civic";30,4;52;4
+"Toyota Corolla";33,9;65;4
+"Toyota Corona";21,5;97;4
+"Dodge Challenger";15,5;150;8
+"AMC Javelin";15,2;150;8
+"Camaro Z28";NA;245;8
+"Pontiac Firebird";19,2;175;8
+"Fiat X1-9";27,3;66;4
+"Porsche 914-2";26;91;4
+"Lotus Europa";30,4;113;4
+"Ford Pantera L";15,8;264;8
+"Ferrari Dino";19,7;175;6
+"Maserati Bora";15;335;8
+"Volvo 142E";21,4;109;4
