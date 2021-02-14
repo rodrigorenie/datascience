@@ -1,3 +1,7 @@
+# TEXT ANALYSIS(Apostila)Parte 1.docx
+# Exercitando 4
+# Execute o que se pede.
+
 import nltk
 import string
 from nltk import ngrams
@@ -6,7 +10,7 @@ from nltk.corpus import machado
 from nltk.corpus import stopwords
 
 # Execute print(machado.readme()) para conhecer melhor o corpus
-# print(machado.readme())
+print(machado.readme())
 
 # Utilizando o corpus machado, elabore um programa que atenda aos requisitos:
 
@@ -37,7 +41,7 @@ print('Total de palavras: {}'.format(len(book_text)))
 print('Total de palavras distintas: {}'.format(len(book_freq)))
 
 # g. Qual é o vocabulário (palavras) presentes na obra?
-#print('Vocabulário: {}'.format(book_freq.keys()))
+print('Vocabulário: {}'.format(book_freq.keys()))
 
 # h. Quais são os 15 termos mais repetidos no texto de Machado de Assis?
 print('\n{:25s} {}'.format('Top 15', 'Frequência'))
@@ -79,5 +83,5 @@ print('\n{:30s} {}'.format('Top 15 Olhos', 'Frequência'))
 for b, f in olhos_freq.most_common(15):
     print('{:30s} {:03}'.format(str(b), f))
 
-# n. Gerar o gráfico dos bigramas com a palavra ‘olhos’
+# n. Gerar o gráfico dos bigramas com a palavra 'olhos'
 olhos_freq.plot(15, cumulative=True)

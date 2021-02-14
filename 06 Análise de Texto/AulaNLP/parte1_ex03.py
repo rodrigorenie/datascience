@@ -1,3 +1,13 @@
+# TEXT ANALYSIS(Apostila)Parte 1.docx
+# Exercitando 3
+# Execute o que se pede.
+# Analise a frequência das palavras ['the', 'that'] no arquivo singles.txt e,
+# depois, no arquivo pirates.txt.
+# Inclua a geração do gráfico de frequência.
+# Gere a lista dos 15 bigramas mais frequentes do texto.
+# Gere a lista dos 20 quadrigramas gramas mais frequentes que possuam a
+# palavra 'life'
+
 import nltk
 from nltk import ngrams
 from nltk import tokenize
@@ -58,23 +68,25 @@ for file in data:
     data[file]['freq_quadrigrams_life'] = nltk.FreqDist(quadrigram)
 
     # Imprime frequência das palavras 'the' e 'that'
-    print('\n{:20s} {:35s} {}'.format('Arquivo', 'Palavra', 'Frequência'))
+    print('\n{:20s} {:35s} {}'.format('Arquivo', 'Token', 'Frequência'))
     for word in ['the', 'that']:
         freq = data[file]['freq_tokens'][word]
         print('{:20s} {:35s} {:03}'.format(file, word, freq))
 
     # Imprime Top 15 Tokens
-    print('\n{:20s} {:35s} {}'.format('Arquivo', 'Token', 'Frequência'))
+    print('\n{:20s} {:35s} {}'.format('Arquivo', 'Top 15 Tokens', 'Frequência'))
     for token, freq in data[file]['freq_tokens_top15']:
         print('{:20s} {:35s} {:03}'.format(file, token, freq))
 
     # Imprime Top 15 Bigramas
-    print('\n{:20s} {:35s} {}'.format('Arquivo', 'Bigrama', 'Frequência'))
+    print('\n{:20s} {:35s} {}'.format(
+        'Arquivo', 'Top 15 Bigrama', 'Frequência'))
     for bigram, freq in data[file]['freq_bigrams_top15']:
         print('{:20s} {:35s} {:03}'.format(file, str(bigram), freq))
 
     # Imprime Top 20 Quadrigramas com palavra "life"
-    print('\n{:20s} {:50s} {}'.format('Arquivo', 'Quadrigrama', 'Frequência'))
+    print('\n{:20s} {:50s} {}'.format(
+        'Arquivo', 'Top 20 Quadrigrama', 'Frequência'))
     top20 = data[file]['freq_quadrigrams_life'].most_common(20)
     for quadrigram, freq in top20:
         print('{:20s} {:50s} {:03}'.format(file, str(quadrigram), freq))

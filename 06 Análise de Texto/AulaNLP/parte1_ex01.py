@@ -1,3 +1,9 @@
+# TEXT ANALYSIS(Apostila)Parte 1.docx
+# Exercitando 1
+# Execute o que se pede.
+# Imprima as palavras dos documentos neg/cv002_tok-3321.txt e
+# pos/cv003_tok-8338.txt
+
 from nltk.corpus import CategorizedPlaintextCorpusReader
 
 corpus_reader = CategorizedPlaintextCorpusReader(
@@ -10,9 +16,9 @@ words = {
 }
 
 # Verificar o que foi carregado
-print(corpus_reader.categories())
-print(corpus_reader.fileids())
-print(corpus_reader.words(fileids=['neg/cv002_tok-3321.txt']))
+# print(corpus_reader.categories())
+# print(corpus_reader.fileids())
+# print(corpus_reader.words(fileids=['neg/cv002_tok-3321.txt']))
 
 for file in words:
     words[file] = corpus_reader.words(fileids=file)
