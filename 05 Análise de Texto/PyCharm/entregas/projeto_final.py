@@ -9,8 +9,11 @@ import wordcloud
 import os
 import logging
 import re
+import string
+
 from pysubparser import parser
 from pysubparser.cleaners import brackets, formatting
+from nltk.corpus import stopwords
 
 logging.basicConfig(
     level=logging.ERROR,
@@ -20,7 +23,7 @@ logging.basicConfig(
 class TheSimpsonsSubtitles:
 
     def __init__(self, rootdir, encoding='latin-1'):
-        self.filelist = {}
+        self.subtitle = []
 
         for dirpath, dirnames, filelist in os.walk(rootdir):
             logging.debug('Escaneando pasta {}'.format(dirpath))
@@ -32,24 +35,25 @@ class TheSimpsonsSubtitles:
                 filename = os.path.join(dirpath, filename)
                 season, episode = self.parse_filename(filename)
 
-                subtitle = parser.parse(filename, encoding='latin-1')
-                subtitle = brackets.clean(subtitle)
-                subtitle = formatting.clean(subtitle)
-                subtitle = ' '.join([lines.text for lines in subtitle])
+                text = parser.parse(filename, encoding=encoding)
+                text = brackets.clean(text)
+                text = formatting.clean(text)
+                text = ' '.join([lines.text for lines in text])
 
                 if season and episode:
-                    if season not in self.filelist:
-                        self.filelist[season] = {}
-                    self.filelist[season][episode] = subtitle
+                    self.subtitle.append((season, episode, text))
+
+    def __iter__(self):
+        return iter(self._subtitle)
 
     @property
-    def filelist(self):
-        return self._filelist
+    def subtitle(self):
+        return self._subtitle
 
-    @filelist.setter
-    def filelist(self, filelist):
-        if not hasattr(self, 'filelist'):
-            self._filelist = filelist
+    @subtitle.setter
+    def subtitle(self, subtitle):
+        if not hasattr(self, 'subtitle'):
+            self._subtitle = subtitle
 
     def parse_filename(self, filename):
         rex = re.search(r"[sS]([0-9]{2})[eE]([0-9]{2})", filename)
@@ -78,5 +82,13 @@ class TheSimpsonsSubtitles:
 
 
 if __name__ == '__main__':
+    sw = [p for p in string.punctuation]
+    sw += stopwords.words('english')
+    print(sw)
+
     s = TheSimpsonsSubtitles('dados/subtitles')
-    print(s.filelist['11']['01'])
+    data = '\n'.join([text for _, _, text in s])
+    data = nltk.sent_tokenize(data)
+    data = [nltk.word_tokenize(s) for s in data]
+    data = [[w for w in s if w.lower() not in sw] for s in data]
+    #print(data)
