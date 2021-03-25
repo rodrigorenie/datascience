@@ -15,10 +15,13 @@ noticia1 = docx.Document('dados/Noticia_1.docx')
 noticia1_tokens = '\n'.join([p.text for p in noticia1.paragraphs])
 noticia1_tokens = nltk.sent_tokenize(noticia1_tokens)
 noticia1_tokens = [nltk.word_tokenize(t) for t in noticia1_tokens]
+print(noticia1_tokens)
 
 noticia1_pos = [nltk.pos_tag(s) for s in noticia1_tokens]
 noticia1_ner = [nltk.ne_chunk(s) for s in noticia1_pos]
+print(noticia1_pos)
 
+exit()
 posdoc = docx.Document()
 for pos in noticia1_pos:
     posdoc.add_paragraph(str(pos))

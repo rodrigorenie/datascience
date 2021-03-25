@@ -5,9 +5,9 @@ import spacy
 
 
 
-from gensim.summarization.summarizer import summarize
+# from gensim.summarization.summarizer import summarize
 # from gensim.summarization import keywords
-import wikipedia
+# import wikipedia
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud, STOPWORDS
 
@@ -41,7 +41,7 @@ for t_nltk, t_spacy in zip(text_nlp_nltk, text_nlp_spacy):
     print('{:20} {:20} {:20} {:20}'
           .format(t_nltk[0], t_spacy.text, t_nltk[1], t_spacy.pos_))
 
-
+exit()
 
 
 
