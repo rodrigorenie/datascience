@@ -23,12 +23,10 @@ from pysubparser.cleaners import brackets, formatting
 from gensim.summarization.summarizer import summarize
 
 logging.basicConfig(
-    # handlers=(
-    #  logging.FileHandler('app.log', mode='w'),
-    #  logging.StreamHandler()
-    # ),
-    level=logging.ERROR,
-    format='%(asctime)s - %(levelname)s - %(message)s'
+    level=logging.DEBUG,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    filename='dados/debug.log',
+    filemode='w'
 )
 
 
@@ -72,7 +70,6 @@ class Subtitles:
                 data = formatting.clean(data)
                 data = [line.text for line in data]
                 self._subtitles[filename] = (season, episode, data)
-                break
 
     @property
     def subtitles(self):
@@ -88,6 +85,9 @@ class Subtitles:
 
     def __str__(self):
         return '\n\n'.join(['\n'.join(subtitle) for subtitle in self]).replace('\x82', '')
+
+    def __len__(self):
+        return len(self._subtitles)
 
 
 class ProjetoFinal:
@@ -617,15 +617,73 @@ class ProjetoFinalSpacy(ProjetoFinal):
 
 
 if __name__ == '__main__':
-    topn = 30
+    """  topn: int    
+    
+    Variável que define a quantidade de itens (TOP N) que serão demonstrados ao longo da execução do programa, tanto na
+    saída texto quanto nos gráficos. Aumentar ou diminuir este valor não altera significativamente o tempo de 
+    processamento, visto que o mais demorado é o processamentos do texto em si, não a contabilização do TOP N.
+    """
+    topn = 50
+
+    """ s: Subtitles
+        
+    Classe que extrai o texto de todas as legendas encontradas na pasta passada como parâmetro. Possui duas principais
+    funcionalidades:    
+        s.subtitles_text: lista onde cada item é o texto de uma das legendas encontradas na pasta
+        str(s): retorna um único objeto de texto contendo todas as legendas da lista acima concatenadas, separadas por
+                duas linhas em branco (\n\n). 
+    """
+
+    # s = Subtitles('dados/Breaking.Bad')
+    # s = Subtitles('dados/The.Simpsons')
+    s = Subtitles('dados/Friends')
+
+    """ ps: ProjetoFinalSpacy()
+        pn: ProjetoFinalNLTK()
+    
+    Armazenam o objeto principal contendo toda a lógica de cada um dos algoritmos de análise de texto: Spacy e NLTK. As
+    duas classes possuem os seguintes atributos:
+    
+        .tokens: lista com todos os tokens detectados pelo algoritmo
+        .tokens_pron_verb: lista de bigramas que são pares de pronomes seguidos por um verbo        
+        .trigrams: lista de todos os trigramas
+        .vocabulary: lista de palavras únicas        
+        
+        .ner: lista contendo todos os tokens detectadas como NER
+        .ner_person: lista de tokens NER especificamente da classe "PESSOAS"
+        .ner_location: lista de tokens NER especificamente da classe "LOCAIS"
+        
+        .wordcloud: armazena a nuvem de palavras de todos os tokens (sem os stopwords)
+        .summary: armazena o texto resumido de todo o texto carregado pela classe
+        .summary_keywords: palavras chaves (apenas as raízes) do texto resumido
+        
+        atributos "<nome>_len": armazena o tamanho da lista retornada pelo atributo <nome>
+        atributos "<nome>_frequency": armazena o objeto Counter do atributo <nome> (para fazer seu TOP N)
+        
+    Cada classe pode ser criada com os seguintes parâmetros:
+    
+        Spacy(text, selectfor)
+            text: texto (string) para realizar a separação em sentenças e tokenização. Pode ser também uma lista de 
+            strings. Se o tamanho do texto passar de nlp.max_length, é obrigatório dividí-lo antes, podendo passar 
+            então como uma lista de strings.
+            
+            selectfor: pode ser "accuracy", onde será selecionado um pipile de treinamento mais veloz, porém mais lento.
+            Ou "efficiency", onde será selecionado um pipeline de treinamento bem mais lento, porém mais preciso. 
+            
+        NLTK(text)
+            text: texto (string) para realizar a separação em sentenças e tokenização.
+    """
+
+    ps = ProjetoFinalSpacy(text=s.subtitles_text, selectfor="accuracy")
+    pn = ProjetoFinalNLTK(text=str(s))
+
+    """
+    A partir daqui, todo o código trata puramente de formatar corretamente o conteúdo dos atributos acima citados, para
+    apresentar o resultado do NLTK e SPACY lado a lado permitindo, visualmente, analisar a diferença dos algoritimos.
+    """
+
     t_fmtstr = '\n\n{:24} {:>22} {:>46}'
     d_fmtstr = '{:02} {:>40} : {:<4} {:>40} : {:<4}'
-
-    s = Subtitles('dados/Breaking.Bad')
-    # s = Subtitles('dados/The.Simpsons')
-
-    ps = ProjetoFinalSpacy(text=s.subtitles_text, selectfor="efficiency")
-    pn = ProjetoFinalNLTK(text=str(s))
 
     #
     # Contagem de sentenças
@@ -668,9 +726,9 @@ if __name__ == '__main__':
 
     highest_v = ((highest_v - (highest_v % 100)) + 100)
     ps.plot(ps.tokens_frequency, title=f"TOP {topn} Tokens: SPACY",
-            limit=topn, xlimit=highest_v, filename="g_top_tokens_spacy.png")
+            limit=topn, xlimit=highest_v, filename="dados/g_top_tokens_spacy.png")
     pn.plot(pn.tokens_frequency, title=f"TOP {topn} Tokens: NLTK",
-            limit=topn, xlimit=highest_v, filename="g_top_tokens_nltk.png")
+            limit=topn, xlimit=highest_v, filename="dados/g_top_tokens_nltk.png")
 
     #
     # Trigramas relevantes (com gráfico de colunas ou barras)
@@ -690,9 +748,9 @@ if __name__ == '__main__':
 
     highest_v = ((highest_v - (highest_v % 100)) + 100)
     ps.plot(ps.trigrams_frequency, title=f"TOP {topn} Trigramas: SPACY",
-            limit=topn, xlimit=highest_v, filename="g_top_trigrams_spacy.png")
+            limit=topn, xlimit=highest_v, filename="dados/g_top_trigrams_spacy.png")
     pn.plot(pn.trigrams_frequency, title=f"TOP {topn} Trigramas: NLTK",
-            limit=topn, xlimit=highest_v, filename="g_top_trigrams_nltk.png")
+            limit=topn, xlimit=highest_v, filename="dados/g_top_trigrams_nltk.png")
 
     #
     # Quais locais (entidades da classe LOCAL) são citados no texto processado?
@@ -712,9 +770,9 @@ if __name__ == '__main__':
 
     highest_v = ((highest_v - (highest_v % 100)) + 100)
     ps.plot(ps.ner_person_frequency, title=f"TOP {topn} Pessoas: SPACY",
-            limit=topn, xlimit=highest_v, filename="g_top_person_spacy.png")
+            limit=topn, xlimit=highest_v, filename="dados/g_top_person_spacy.png")
     pn.plot(pn.ner_person_frequency, title=f"TOP {topn} Pessoas: NLTK",
-            limit=topn, xlimit=highest_v, filename="g_top_person_nltk.png")
+            limit=topn, xlimit=highest_v, filename="dados/g_top_person_nltk.png")
 
     zipped = itertools.zip_longest(ps.ner_location_frequency.most_common(topn),
                                    pn.ner_location_frequency.most_common(topn),
@@ -730,9 +788,9 @@ if __name__ == '__main__':
 
     highest_v = ((highest_v - (highest_v % 100)) + 100)
     ps.plot(ps.ner_location_frequency, title=f"TOP {topn} Locais: SPACY",
-            limit=topn, xlimit=highest_v, filename="g_top_location_spacy.png")
+            limit=topn, xlimit=highest_v, filename="dados/g_top_location_spacy.png")
     pn.plot(pn.ner_location_frequency, title=f"TOP {topn} Locais: NLTK",
-            limit=topn, xlimit=highest_v, filename="g_top_location_nltk.png")
+            limit=topn, xlimit=highest_v, filename="dados/g_top_location_nltk.png")
 
     #
     # Qual é a proporção de pronomes frente aos verbos do texto?
@@ -752,16 +810,16 @@ if __name__ == '__main__':
 
     highest_v = ((highest_v - (highest_v % 100)) + 100)
     ps.plot(ps.tokens_pron_verb_frequency, title=f"TOP {topn} Pron-Verb: SPACY",
-            limit=topn, xlimit=highest_v, filename="g_top_pron_verb_spacy.png")
+            limit=topn, xlimit=highest_v, filename="dados/g_top_pron_verb_spacy.png")
     pn.plot(pn.tokens_pron_verb_frequency, title=f"TOP {topn} Pron-Verb: NLTK",
-            limit=topn, xlimit=highest_v, filename="g_top_pron_verb_nltk.png")
+            limit=topn, xlimit=highest_v, filename="dados/g_top_pron_verb_nltk.png")
 
     #
     # Nuvem de palavras
     #
 
-    ps.wordcloud.to_file('g_wordcloud_spacy.png')
-    pn.wordcloud.to_file('g_wordcloud_nltk.png')
+    ps.wordcloud.to_file('dados/g_wordcloud_spacy.png')
+    pn.wordcloud.to_file('dados/g_wordcloud_nltk.png')
 
     #
     # Obtenha um resumo dos textos utilizados, acompanhados das palavras-chave
